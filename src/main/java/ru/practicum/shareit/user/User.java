@@ -14,9 +14,9 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class User {
     private int id;
-    @NotBlank(message = "Name can't be blank")
+    @NotBlank(message = "User name can't be blank")
     private String name;
-    @NotBlank(message = "Email can't be blank")
+    @NotBlank(message = "User email can't be blank")
     @Email(message = "Incorrect email")
     private String email;
 }

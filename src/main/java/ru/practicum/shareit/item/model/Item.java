@@ -6,7 +6,7 @@ import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * TODO Sprint add-controllers.
@@ -16,12 +16,12 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 public class Item {
     private int id;
-    @NotBlank(message = "Name can't be blank")
+    @NotBlank(message = "Item name can't be blank")
     private String name;
-    @NotBlank(message = "Description can't be blank")
+    @NotBlank(message = "Item description can't be blank")
     private String description;
-    @NotEmpty(message = "Available can't be empty")
-    private boolean available;
+    @NotNull(message = "Item availability can't be null")
+    private Boolean available;
     private User owner;
     private ItemRequest request;
 }

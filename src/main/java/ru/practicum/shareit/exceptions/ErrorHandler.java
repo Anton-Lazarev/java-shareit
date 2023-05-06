@@ -12,7 +12,7 @@ import java.util.Map;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler({UserNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final RuntimeException e) {
         log.error(e.getMessage(), e.getStackTrace());
@@ -22,6 +22,13 @@ public class ErrorHandler {
     @ExceptionHandler({EmailAlreadyExistException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleConflictException(final RuntimeException e) {
+        log.error(e.getMessage(), e.getStackTrace());
+        return Map.of("Error", e.getMessage());
+    }
+
+    @ExceptionHandler({IncorrectOwnerException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Map<String, String> handleForbiddenException(final RuntimeException e) {
         log.error(e.getMessage(), e.getStackTrace());
         return Map.of("Error", e.getMessage());
     }
