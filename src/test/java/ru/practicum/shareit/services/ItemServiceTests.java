@@ -91,7 +91,7 @@ public class ItemServiceTests {
         service.addItem(1, secondDTO);
         ItemDto update = ItemDto.builder().id(1).name("Update").description("Updated hammer").available(true).build();
         final IncorrectOwnerException exception = assertThrows(IncorrectOwnerException.class, () -> service.patchItem(2, update));
-        assertEquals("User with ID 2 not owner of present item", exception.getMessage());
+        assertEquals("User with ID 2 not owner of present item with ID 1", exception.getMessage());
     }
 
     @Test

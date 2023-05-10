@@ -42,7 +42,7 @@ public class ItemServiceImpl implements ItemService {
         }
         Item item = itemRepository.getItemByID(itemDto.getId());
         if (item.getOwner().getId() != userID) {
-            throw new IncorrectOwnerException("User with ID " + userID + " not owner of present item");
+            throw new IncorrectOwnerException("User with ID " + userID + " not owner of present item with ID " + item.getId());
         }
         if (itemDto.getName() != null) {
             item.setName(itemDto.getName());
