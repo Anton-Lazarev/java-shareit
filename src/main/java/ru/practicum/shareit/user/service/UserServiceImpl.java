@@ -1,11 +1,14 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.EmailAlreadyExistException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserDto;
+import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,9 +16,10 @@ import java.util.Collection;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class UserService {
-    private final UserStorage storage;
+public class UserServiceImpl implements UserService {
+    private final UserRepository storage;
 
+    @Override
     public Collection<UserDto> getAllUsers() {
         ArrayList<UserDto> usersDTO = new ArrayList<>();
         for (User user : storage.getAll()) {
@@ -25,6 +29,7 @@ public class UserService {
         return usersDTO;
     }
 
+    @Override
     public UserDto addUser(UserDto userDto) {
         if (storage.containsEmail(userDto.getEmail())) {
             throw new EmailAlreadyExistException("Email " + userDto.getEmail() + " already exist in base, can't add user");
@@ -34,6 +39,7 @@ public class UserService {
         return UserMapper.userToUserDTO(newUser);
     }
 
+    @Override
     public UserDto patchUser(UserDto userDto) {
         if (!storage.containsID(userDto.getId())) {
             throw new UserNotFoundException("User with ID " + userDto.getId() + " not present");
@@ -57,6 +63,7 @@ public class UserService {
         return UserMapper.userToUserDTO(user);
     }
 
+    @Override
     public void deleteUser(int id) {
         if (!storage.containsID(id)) {
             throw new UserNotFoundException("User with ID " + id + " not present");
@@ -65,6 +72,7 @@ public class UserService {
         storage.deleteUser(id);
     }
 
+    @Override
     public UserDto getUserByID(int id) {
         if (!storage.containsID(id)) {
             throw new UserNotFoundException("User with ID " + id + " not present");

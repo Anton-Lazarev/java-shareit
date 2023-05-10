@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * TODO Sprint add-controllers.
@@ -47,6 +49,9 @@ public class ItemController {
 
     @GetMapping("/search")
     public Collection<ItemDto> findItemsByText(@RequestParam String text) {
+        if (text == null || text.isBlank()) {
+            return Collections.emptyList();
+        }
         return itemService.searchItemsByText(text);
     }
 }

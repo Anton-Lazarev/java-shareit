@@ -1,10 +1,10 @@
-package ru.practicum.shareit.user.storage;
+package ru.practicum.shareit.user.repository;
 
 import ru.practicum.shareit.user.User;
 
 import java.util.Collection;
 
-public interface UserStorage {
+public interface UserRepository {
 
     Collection<User> getAll();
 

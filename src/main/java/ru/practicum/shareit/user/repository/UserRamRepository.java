@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.storage;
+package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.User;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component("UserRamStorage")
-public class UserRamStorage implements UserStorage {
+public class UserRamRepository implements UserRepository {
     private int nextID = 1;
     private Map<Integer, User> users = new HashMap<>();
     private Set<String> mails = new HashSet<>();

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.storage;
+package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component("ItemRamStorage")
-public class ItemRamStorage implements ItemStorage {
+public class ItemRamRepository implements ItemRepository {
     private int nextID = 1;
     private Map<Integer, Item> items = new HashMap<>();
 
