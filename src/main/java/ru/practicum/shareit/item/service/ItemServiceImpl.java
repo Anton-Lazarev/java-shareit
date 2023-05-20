@@ -25,22 +25,22 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addItem(int userID, ItemDto itemDto) {
-        if (!userRepository.containsID(userID)) {
+        if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
         Item newItem = ItemMapper.itemDtoToItem(itemDto);
-        newItem.setOwner(userRepository.findUserByID(userID));
-        itemRepository.addItem(newItem);
+        newItem.setOwner(userRepository.findById(userID).get());
+        itemRepository.save(newItem);
         log.info("Create new item with ID {}, name {} and owner ID {}", newItem.getId(), newItem.getName(), userID);
         return ItemMapper.itemToItemDTO(newItem);
     }
 
     @Override
     public ItemDto patchItem(int userID, ItemDto itemDto) {
-        if (!userRepository.containsID(userID)) {
+        if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
-        Item item = itemRepository.getItemByID(itemDto.getId());
+        Item item = itemRepository.findById(itemDto.getId()).get();
         if (item.getOwner().getId() != userID) {
             throw new IncorrectOwnerException("User with ID " + userID + " not owner of current item with ID " + item.getId());
         }
@@ -53,26 +53,26 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-        itemRepository.update(item);
+        itemRepository.save(item);
         log.info("Item with ID {} updated", item.getId());
         return ItemMapper.itemToItemDTO(item);
     }
 
     @Override
     public ItemDto getItemByID(int itemID) {
-        if (!itemRepository.containsID(itemID)) {
+        if (!itemRepository.existsById(itemID)) {
             throw new ItemNotFoundException("Item with ID " + itemID + " not present");
         }
         log.info("Getting item with ID {}", itemID);
-        return ItemMapper.itemToItemDTO(itemRepository.getItemByID(itemID));
+        return ItemMapper.itemToItemDTO(itemRepository.findById(itemID).get());
     }
 
     @Override
     public Collection<ItemDto> getItemsOfUserByID(int userID) {
-        if (!userRepository.containsID(userID)) {
+        if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
-        List<ItemDto> itemsDTO = itemRepository.getItemsOfUserByUserID(userID)
+        List<ItemDto> itemsDTO = itemRepository.findAllByUserId(userID)
                 .stream().map(ItemMapper::itemToItemDTO)
                 .collect(Collectors.toList());
         log.info("Get itemsDTO list with size {}", itemsDTO.size());
@@ -81,7 +81,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> searchItemsByText(String text) {
-        List<ItemDto> itemsDTO = itemRepository.findItemsByDescAndName(text)
+        List<ItemDto> itemsDTO = itemRepository.findByNameOrDescriptionContainingIgnoreCase(text.toLowerCase())
                 .stream().map(ItemMapper::itemToItemDTO)
                 .collect(Collectors.toList());
         log.info("Get itemsDTO list with size {}", itemsDTO.size());
