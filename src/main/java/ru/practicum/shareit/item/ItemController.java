@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.IncomeCommentDTO;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsAndCommentsDTO;
+import ru.practicum.shareit.item.dto.OutcomeCommentDTO;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
@@ -31,8 +34,14 @@ public class ItemController {
         return itemService.addItem(userID, itemDto);
     }
 
+    @PostMapping("/{id}/comment")
+    public OutcomeCommentDTO addComment(@RequestHeader("X-Sharer-User-Id") int userID, @PathVariable int id,
+                                        @Valid @RequestBody IncomeCommentDTO commentDTO) {
+        return itemService.addCommentToItemByUser(id, userID, commentDTO);
+    }
+
     @GetMapping
-    public Collection<ItemDto> findItemsByOwner(@RequestHeader("X-Sharer-User-Id") int userID) {
+    public Collection<ItemWithBookingsAndCommentsDTO> findItemsByOwner(@RequestHeader("X-Sharer-User-Id") int userID) {
         return itemService.getItemsOfUserByID(userID);
     }
 
@@ -43,8 +52,8 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto findItemByID(@PathVariable int id) {
-        return itemService.getItemByID(id);
+    public ItemWithBookingsAndCommentsDTO findItemByID(@PathVariable int id, @RequestHeader("X-Sharer-User-Id") int userID) {
+        return itemService.getItemByID(id, userID);
     }
 
     @GetMapping("/search")

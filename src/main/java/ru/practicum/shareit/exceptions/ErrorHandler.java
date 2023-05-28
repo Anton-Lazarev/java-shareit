@@ -12,31 +12,39 @@ import java.util.Map;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class,
+            IncorrectBookingApproverException.class, IncorrectOwnerInBookingException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final RuntimeException e) {
         log.error(e.getMessage(), e.getStackTrace());
-        return Map.of("Error", e.getMessage());
+        return Map.of("error", e.getMessage());
     }
 
     @ExceptionHandler({EmailAlreadyExistException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleConflictException(final RuntimeException e) {
         log.error(e.getMessage(), e.getStackTrace());
-        return Map.of("Error", e.getMessage());
+        return Map.of("error", e.getMessage());
     }
 
-    @ExceptionHandler({IncorrectOwnerException.class})
+    @ExceptionHandler({IncorrectItemOwnerException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public Map<String, String> handleForbiddenException(final RuntimeException e) {
         log.error(e.getMessage(), e.getStackTrace());
-        return Map.of("Error", e.getMessage());
+        return Map.of("error", e.getMessage());
+    }
+
+    @ExceptionHandler({BookingValidationException.class, UnsupportedStatusException.class, UserNotBookedItemException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleValidationException(final RuntimeException e) {
+        log.error(e.getMessage(), e.getStackTrace());
+        return Map.of("error", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleUnexpectedException(final RuntimeException e) {
         log.error(e.getMessage(), e.getStackTrace());
-        return Map.of("Error", e.getMessage());
+        return Map.of("error", e.getMessage());
     }
 }

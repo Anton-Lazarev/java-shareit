@@ -12,8 +12,8 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     @Query("select it from Item as it where (lower(it.name) like concat('%', ?1, '%') " +
             "or lower(it.description) like concat('%', ?1, '%')) and it.available = true")
-    List<Item> findByNameOrDescriptionContainingIgnoreCase(String text);
+    List<Item> findItemByNameAndDesc(String text);
 
-    @Query(value = "select * from items as i where i.owner_id = ?1", nativeQuery = true)
+    @Query(value = "select * from items as i where i.owner_id = ?1 order by id", nativeQuery = true)
     List<Item> findAllByUserId(int id);
 }
