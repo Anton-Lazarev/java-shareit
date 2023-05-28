@@ -19,8 +19,11 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "users", schema = "public")
-@Getter @Setter @ToString
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class User {
     @Id

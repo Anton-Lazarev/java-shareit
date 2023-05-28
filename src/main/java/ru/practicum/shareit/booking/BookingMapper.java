@@ -8,7 +8,7 @@ import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.user.UserMapper;
 
 public class BookingMapper {
-    public static Booking IncomeBookingDtoToBooking(IncomeBookingDto dto) {
+    public static Booking incomeBookingDtoToBooking(IncomeBookingDto dto) {
         return Booking.builder()
                 .start(dto.getStart())
                 .end(dto.getEnd())

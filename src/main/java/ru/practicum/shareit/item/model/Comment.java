@@ -20,8 +20,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments", schema = "public")
-@Getter @Setter @ToString
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Comment {
     @Id

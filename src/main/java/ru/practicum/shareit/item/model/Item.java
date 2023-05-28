@@ -25,8 +25,11 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "items", schema = "public")
-@Getter @Setter @ToString
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Item {
     @Id

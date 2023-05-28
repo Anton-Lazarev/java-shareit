@@ -44,7 +44,7 @@ public class BookingServiceImpl implements BookingService {
         if (!itemForBooking.getAvailable()) {
             throw new BookingValidationException("Item with ID " + itemForBooking.getId() + " unavailable for booking");
         }
-        Booking newBooking = BookingMapper.IncomeBookingDtoToBooking(bookingDto);
+        Booking newBooking = BookingMapper.incomeBookingDtoToBooking(bookingDto);
         newBooking.setBooker(userRepository.findById(userID).get());
         newBooking.setItem(itemForBooking);
         newBooking.setStatus(BookingStatus.WAITING);
@@ -129,8 +129,8 @@ public class BookingServiceImpl implements BookingService {
         }
         dtos = bookings.stream().map(BookingMapper::bookingToOutcomeBookingDTO)
                 .collect(Collectors.toList());
-        log.info("Get bookingDTO list with size {} of bookings for user with ID {} and state {}"
-                , dtos.size(), userID, state);
+        log.info("Get bookingDTO list with size {} of bookings for user with ID {} and state {}",
+                dtos.size(), userID, state);
         return dtos;
     }
 
@@ -169,8 +169,8 @@ public class BookingServiceImpl implements BookingService {
         }
         dtos = bookings.stream().map(BookingMapper::bookingToOutcomeBookingDTO)
                 .collect(Collectors.toList());
-        log.info("Get bookingDTO list with size {} of bookings for item owner with ID {} and state {}"
-                , dtos.size(), userID, state);
+        log.info("Get bookingDTO list with size {} of bookings for item owner with ID {} and state {}",
+                dtos.size(), userID, state);
         return dtos;
     }
 }
