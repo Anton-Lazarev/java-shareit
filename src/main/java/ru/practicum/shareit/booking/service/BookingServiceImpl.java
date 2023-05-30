@@ -14,7 +14,6 @@ import ru.practicum.shareit.exceptions.BookingValidationException;
 import ru.practicum.shareit.exceptions.IncorrectBookingApproverException;
 import ru.practicum.shareit.exceptions.IncorrectOwnerInBookingException;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
-import ru.practicum.shareit.exceptions.UnsupportedStatusException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
