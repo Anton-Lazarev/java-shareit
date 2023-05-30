@@ -46,10 +46,7 @@ public class BookingController {
 
     @GetMapping
     public List<OutcomeBookingDto> findBookingsOfUserInState(@RequestHeader("X-Sharer-User-Id") int userID,
-                                                             @RequestParam(required = false) String state) {
-        if (state == null || state.isEmpty()) {
-            state = "ALL";
-        }
+                                                             @RequestParam(required = false, defaultValue = "ALL") String state) {
         BookingStateRequest stateRequest = BookingStateRequest.from(state)
                 .orElseThrow(() -> new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS"));
         return bookingService.getBookingsOfUserByState(userID, stateRequest.name());
@@ -57,10 +54,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<OutcomeBookingDto> findBookingsOfItemOwnerByState(@RequestHeader("X-Sharer-User-Id") int userID,
-                                                                  @RequestParam(required = false) String state) {
-        if (state == null || state.isEmpty()) {
-            state = "ALL";
-        }
+                                                                  @RequestParam(required = false, defaultValue = "ALL") String state) {
         BookingStateRequest stateRequest = BookingStateRequest.from(state)
                 .orElseThrow(() -> new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS"));
         return bookingService.getBookingsOfUserItemsByState(userID, stateRequest.name());
