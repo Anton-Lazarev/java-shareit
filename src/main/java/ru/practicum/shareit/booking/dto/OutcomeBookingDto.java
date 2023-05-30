@@ -2,8 +2,8 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.item.model.ShortItem;
-import ru.practicum.shareit.user.model.ShortUser;
+import ru.practicum.shareit.item.dto.ShortItem;
+import ru.practicum.shareit.user.dto.ShortUser;
 
 import java.time.LocalDateTime;
 

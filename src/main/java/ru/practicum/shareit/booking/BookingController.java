@@ -10,16 +10,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.booking.dto.BookingStateRequest;
 import ru.practicum.shareit.booking.dto.IncomeBookingDto;
 import ru.practicum.shareit.booking.dto.OutcomeBookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exceptions.UnsupportedStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-bookings.
- */
 @RestController
 @RequestMapping(path = "/bookings")
 @AllArgsConstructor
@@ -48,12 +47,22 @@ public class BookingController {
     @GetMapping
     public List<OutcomeBookingDto> findBookingsOfUserInState(@RequestHeader("X-Sharer-User-Id") int userID,
                                                              @RequestParam(required = false) String state) {
-        return bookingService.getBookingsOfUserByState(userID, state);
+        if (state == null || state.isEmpty()) {
+            state = "ALL";
+        }
+        BookingStateRequest stateRequest = BookingStateRequest.from(state)
+                .orElseThrow(() -> new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS"));
+        return bookingService.getBookingsOfUserByState(userID, stateRequest.name());
     }
 
     @GetMapping("/owner")
     public List<OutcomeBookingDto> findBookingsOfItemOwnerByState(@RequestHeader("X-Sharer-User-Id") int userID,
                                                                   @RequestParam(required = false) String state) {
-        return bookingService.getBookingsOfUserItemsByState(userID, state);
+        if (state == null || state.isEmpty()) {
+            state = "ALL";
+        }
+        BookingStateRequest stateRequest = BookingStateRequest.from(state)
+                .orElseThrow(() -> new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS"));
+        return bookingService.getBookingsOfUserItemsByState(userID, stateRequest.name());
     }
 }

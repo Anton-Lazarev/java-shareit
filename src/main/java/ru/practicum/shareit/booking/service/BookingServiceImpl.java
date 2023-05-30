@@ -44,10 +44,9 @@ public class BookingServiceImpl implements BookingService {
         if (!itemForBooking.getAvailable()) {
             throw new BookingValidationException("Item with ID " + itemForBooking.getId() + " unavailable for booking");
         }
-        Booking newBooking = BookingMapper.incomeBookingDtoToBooking(bookingDto);
-        newBooking.setBooker(userRepository.findById(userID).get());
-        newBooking.setItem(itemForBooking);
-        newBooking.setStatus(BookingStatus.WAITING);
+        Booking newBooking = BookingMapper.incomeBookingDtoToBooking(bookingDto,
+                userRepository.findById(userID).get(),
+                itemForBooking);
         BookingValidator.validate(newBooking);
         log.info("Add booking from user with ID {} for item with ID {}", userID, itemForBooking.getId());
         bookingRepository.save(newBooking);
@@ -101,13 +100,6 @@ public class BookingServiceImpl implements BookingService {
         }
         List<Booking> bookings;
         List<OutcomeBookingDto> dtos;
-        if (state == null || state.equals("ALL") || state.isEmpty()) {
-            dtos = bookingRepository.findBookingsOfUserInStateALL(userID)
-                    .stream().map(BookingMapper::bookingToOutcomeBookingDTO)
-                    .collect(Collectors.toList());
-            log.info("Get bookingDTO list with size {} of bookings for user with ID {}", dtos.size(), userID);
-            return dtos;
-        }
         switch (state.toUpperCase()) {
             case ("CURRENT"):
                 bookings = bookingRepository.findBookingsOfUserInStateCURRENT(userID, LocalDateTime.now());
@@ -125,7 +117,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findBookingsOfUserInStateREJECTED(userID);
                 break;
             default:
-                throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
+                bookings = bookingRepository.findBookingsOfUserInStateALL(userID);
         }
         dtos = bookings.stream().map(BookingMapper::bookingToOutcomeBookingDTO)
                 .collect(Collectors.toList());
@@ -141,13 +133,6 @@ public class BookingServiceImpl implements BookingService {
         }
         List<Booking> bookings;
         List<OutcomeBookingDto> dtos;
-        if (state == null || state.equals("ALL") || state.isEmpty()) {
-            dtos = bookingRepository.findBookingsOfItemOwnerInStateALL(userID)
-                    .stream().map(BookingMapper::bookingToOutcomeBookingDTO)
-                    .collect(Collectors.toList());
-            log.info("Get bookingDTO list with size {} of bookings for item owner with ID {}", dtos.size(), userID);
-            return dtos;
-        }
         switch (state.toUpperCase()) {
             case ("CURRENT"):
                 bookings = bookingRepository.findBookingsOfItemOwnerInStateCURRENT(userID, LocalDateTime.now());
@@ -165,7 +150,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findBookingsOfItemOwnerInStateREJECTED(userID);
                 break;
             default:
-                throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
+                bookings = bookingRepository.findBookingsOfItemOwnerInStateALL(userID);
         }
         dtos = bookings.stream().map(BookingMapper::bookingToOutcomeBookingDTO)
                 .collect(Collectors.toList());

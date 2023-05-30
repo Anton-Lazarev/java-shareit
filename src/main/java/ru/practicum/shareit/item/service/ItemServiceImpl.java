@@ -44,8 +44,7 @@ public class ItemServiceImpl implements ItemService {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
-        Item newItem = ItemMapper.itemDtoToItem(itemDto);
-        newItem.setOwner(userRepository.findById(userID).get());
+        Item newItem = ItemMapper.itemDtoToItem(itemDto, userRepository.findById(userID).get());
         itemRepository.save(newItem);
         log.info("Create new item with ID {}, name {} and owner ID {}", newItem.getId(), newItem.getName(), userID);
         return ItemMapper.itemToItemDTO(newItem);
@@ -128,9 +127,9 @@ public class ItemServiceImpl implements ItemService {
         if (bookingRepository.findOneApprovedBookingOfItemInPast(itemID, LocalDateTime.now()).isEmpty()) {
             throw new BookingValidationException("Item with ID " + itemID + " didn't book yet");
         }
-        Comment newComment = CommentMapper.incomeCommentDtoToComment(dto);
-        newComment.setAuthor(userRepository.findById(userID).get());
-        newComment.setItem(itemRepository.findById(itemID).get());
+        Comment newComment = CommentMapper.incomeCommentDtoToComment(dto,
+                userRepository.findById(userID).get(),
+                itemRepository.findById(itemID).get());
         commentRepository.save(newComment);
         log.info("Add new comment with ID {} to item with ID {} by user with ID {}", newComment.getId(), itemID, userID);
         return CommentMapper.commentToOutcomeCommentDTO(newComment);

@@ -19,10 +19,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-/**
- * TODO Sprint add-controllers.
- */
-
 @Entity
 @Table(name = "items", schema = "public")
 @Getter

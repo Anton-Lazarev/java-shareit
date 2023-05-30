@@ -23,10 +23,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
-
 @Entity
 @Table(name = "bookings", schema = "public")
 @Getter

@@ -20,9 +20,6 @@ import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 @AllArgsConstructor
