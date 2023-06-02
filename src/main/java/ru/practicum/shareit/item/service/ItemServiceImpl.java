@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -9,18 +11,20 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.BookingValidationException;
 import ru.practicum.shareit.exceptions.IncorrectItemOwnerException;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.exceptions.ItemRequestNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotBookedItemException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.CommentMapper;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.IncomeCommentDTO;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDTO;
 import ru.practicum.shareit.item.dto.ItemWithBookingsAndCommentsDTO;
 import ru.practicum.shareit.item.dto.OutcomeCommentDTO;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -38,20 +42,31 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository requestRepository;
 
     @Override
-    public ItemDto addItem(int userID, ItemDto itemDto) {
+    public ItemDTO addItem(int userID, ItemDTO itemDto) {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
-        Item newItem = ItemMapper.itemDtoToItem(itemDto, userRepository.findById(userID).get());
+        Item newItem;
+        if (itemDto.getRequestId() != null) {
+            if (!requestRepository.existsById(itemDto.getRequestId())) {
+                throw new ItemRequestNotFoundException("Item request with ID " + itemDto.getRequestId() + " not presented");
+            }
+            newItem = ItemMapper.itemDtoToItem(itemDto,
+                    userRepository.findById(userID).get(),
+                    requestRepository.findById(itemDto.getRequestId()).get());
+        } else {
+            newItem = ItemMapper.itemDtoToItem(itemDto, userRepository.findById(userID).get());
+        }
         itemRepository.save(newItem);
         log.info("Create new item with ID {}, name {} and owner ID {}", newItem.getId(), newItem.getName(), userID);
         return ItemMapper.itemToItemDTO(newItem);
     }
 
     @Override
-    public ItemDto patchItem(int userID, ItemDto itemDto) {
+    public ItemDTO patchItem(int userID, ItemDTO itemDto) {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
@@ -90,11 +105,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemWithBookingsAndCommentsDTO> getItemsOfUserByID(int userID) {
+    public Collection<ItemWithBookingsAndCommentsDTO> getItemsOfUserByID(int userID, int from, int size) {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
-        List<Item> itemsOfUser = itemRepository.findAllByUserId(userID);
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Item> itemsOfUser = itemRepository.findAllByUserId(userID, pageable);
         List<ItemWithBookingsAndCommentsDTO> itemsDTO = new ArrayList<>();
         for (Item item : itemsOfUser) {
             ItemWithBookingsAndCommentsDTO dto = createOutcomeItemDtoWithBookingsAndComments(item);
@@ -105,8 +121,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDto> searchItemsByText(String text) {
-        List<ItemDto> itemsDTO = itemRepository.findItemByNameAndDesc(text.toLowerCase())
+    public Collection<ItemDTO> searchItemsByText(String text, int from, int size) {
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<ItemDTO> itemsDTO = itemRepository.findItemByNameAndDesc(text.toLowerCase(), pageable)
                 .stream().map(ItemMapper::itemToItemDTO)
                 .collect(Collectors.toList());
         log.info("Get itemsDTO list with size {}", itemsDTO.size());

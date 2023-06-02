@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.dto.BookingStateRequest;
-import ru.practicum.shareit.booking.dto.IncomeBookingDto;
-import ru.practicum.shareit.booking.dto.OutcomeBookingDto;
+import ru.practicum.shareit.booking.dto.IncomeBookingDTO;
+import ru.practicum.shareit.booking.dto.OutcomeBookingDTO;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exceptions.UnsupportedStatusException;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 
 @RestController
@@ -26,37 +27,47 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public OutcomeBookingDto create(@RequestHeader("X-Sharer-User-Id") int userID,
-                                    @Valid @RequestBody IncomeBookingDto bookingDto) {
+    public OutcomeBookingDTO create(@RequestHeader("X-Sharer-User-Id") int userID,
+                                    @Valid @RequestBody IncomeBookingDTO bookingDto) {
         return bookingService.addBooking(userID, bookingDto);
     }
 
     @PatchMapping("/{bookingID}")
-    public OutcomeBookingDto approveBooking(@RequestHeader("X-Sharer-User-Id") int userID,
+    public OutcomeBookingDTO approveBooking(@RequestHeader("X-Sharer-User-Id") int userID,
                                             @PathVariable int bookingID,
                                             @RequestParam boolean approved) {
         return bookingService.changeBookingStatus(userID, bookingID, approved);
     }
 
     @GetMapping("/{bookingID}")
-    public OutcomeBookingDto findBookingByID(@RequestHeader("X-Sharer-User-Id") int userID,
+    public OutcomeBookingDTO findBookingByID(@RequestHeader("X-Sharer-User-Id") int userID,
                                              @PathVariable int bookingID) {
         return bookingService.getBookingByID(userID, bookingID);
     }
 
     @GetMapping
-    public List<OutcomeBookingDto> findBookingsOfUserInState(@RequestHeader("X-Sharer-User-Id") int userID,
-                                                             @RequestParam(required = false, defaultValue = "ALL") String state) {
+    public List<OutcomeBookingDTO> findBookingsOfUserInState(@RequestHeader("X-Sharer-User-Id") int userID,
+                                                             @RequestParam(required = false, defaultValue = "ALL") String state,
+                                                             @RequestParam(defaultValue = "0", required = false) int from,
+                                                             @RequestParam(defaultValue = "5", required = false) int size) {
         BookingStateRequest stateRequest = BookingStateRequest.from(state)
                 .orElseThrow(() -> new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS"));
-        return bookingService.getBookingsOfUserByState(userID, stateRequest.name());
+        if (from < 0 || size <= 0) {
+            throw new ValidationException("Page or size can't be negative");
+        }
+        return bookingService.getBookingsOfUserByState(userID, stateRequest.name(), from, size);
     }
 
     @GetMapping("/owner")
-    public List<OutcomeBookingDto> findBookingsOfItemOwnerByState(@RequestHeader("X-Sharer-User-Id") int userID,
-                                                                  @RequestParam(required = false, defaultValue = "ALL") String state) {
+    public List<OutcomeBookingDTO> findBookingsOfItemOwnerByState(@RequestHeader("X-Sharer-User-Id") int userID,
+                                                                  @RequestParam(required = false, defaultValue = "ALL") String state,
+                                                                  @RequestParam(defaultValue = "0", required = false) int from,
+                                                                  @RequestParam(defaultValue = "5", required = false) int size) {
         BookingStateRequest stateRequest = BookingStateRequest.from(state)
                 .orElseThrow(() -> new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS"));
-        return bookingService.getBookingsOfUserItemsByState(userID, stateRequest.name());
+        if (from < 0 || size <= 0) {
+            throw new ValidationException("Page or size can't be negative");
+        }
+        return bookingService.getBookingsOfUserItemsByState(userID, stateRequest.name(), from, size);
     }
 }

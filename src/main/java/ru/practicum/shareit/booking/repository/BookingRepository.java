@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,52 +14,52 @@ import java.util.Optional;
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query(value = "select * from bookings where booker_id = ?1 order by start_date desc", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStateALL(int userID);
+    List<Booking> findBookingsOfUserInStateALL(int userID, Pageable pageable);
 
     @Query(value = "select * from bookings where booker_id = ?1 and (status = 'REJECTED' or status = 'CANCELED') " +
             "order by start_date desc", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStateREJECTED(int userID);
+    List<Booking> findBookingsOfUserInStateREJECTED(int userID, Pageable pageable);
 
     @Query(value = "select * from bookings where booker_id = ?1 and end_date < ?2 " +
             "order by start_date desc", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStatePAST(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfUserInStatePAST(int userID, LocalDateTime dateTime, Pageable pageable);
 
     @Query(value = "select * from bookings where booker_id = ?1 and start_date > ?2 " +
             "order by start_date desc", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStateFUTURE(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfUserInStateFUTURE(int userID, LocalDateTime dateTime, Pageable pageable);
 
     @Query(value = "select * from bookings where booker_id = ?1 " +
             "and (start_date < ?2 and end_date > ?2) " +
             "order by id", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStateCURRENT(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfUserInStateCURRENT(int userID, LocalDateTime dateTime, Pageable pageable);
 
     @Query(value = "select * from bookings where booker_id = ?1 and status = 'WAITING' " +
             "and (start_date < ?2 or end_date > ?2) " +
             "order by start_date desc", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStateWAITING(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfUserInStateWAITING(int userID, LocalDateTime dateTime, Pageable pageable);
 
     @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 order by b.start desc")
-    List<Booking> findBookingsOfItemOwnerInStateALL(int userID);
+    List<Booking> findBookingsOfItemOwnerInStateALL(int userID, Pageable pageable);
 
     @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 " +
             "and (b.start < ?2 and b.end > ?2) order by b.id")
-    List<Booking> findBookingsOfItemOwnerInStateCURRENT(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfItemOwnerInStateCURRENT(int userID, LocalDateTime dateTime, Pageable pageable);
 
     @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 and b.end < ?2 " +
             "order by b.start desc")
-    List<Booking> findBookingsOfItemOwnerInStatePAST(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfItemOwnerInStatePAST(int userID, LocalDateTime dateTime, Pageable pageable);
 
     @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 and b.start > ?2 " +
             "order by b.start desc")
-    List<Booking> findBookingsOfItemOwnerInStateFUTURE(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfItemOwnerInStateFUTURE(int userID, LocalDateTime dateTime, Pageable pageable);
 
     @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 " +
             "and (b.start < ?2 or b.end > ?2) and b.status = 'WAITING' order by b.start desc")
-    List<Booking> findBookingsOfItemOwnerInStateWAITING(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfItemOwnerInStateWAITING(int userID, LocalDateTime dateTime, Pageable pageable);
 
     @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 " +
             "and (b.status = 'CANCELED' or b.status = 'REJECTED') order by b.start desc ")
-    List<Booking> findBookingsOfItemOwnerInStateREJECTED(int userID);
+    List<Booking> findBookingsOfItemOwnerInStateREJECTED(int userID, Pageable pageable);
 
     @Query(value = "select * from bookings where item_id = ?1 and status = 'APPROVED' " +
             "and start_date < ?2 order by start_date desc limit 1", nativeQuery = true)

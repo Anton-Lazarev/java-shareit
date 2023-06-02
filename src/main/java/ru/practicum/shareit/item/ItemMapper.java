@@ -2,32 +2,45 @@ package ru.practicum.shareit.item;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDTO;
 import ru.practicum.shareit.item.dto.ItemWithBookingsAndCommentsDTO;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.dto.ShortItem;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Collections;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
-    public static ItemDto itemToItemDTO(Item item) {
-        return ItemDto.builder()
+    public static ItemDTO itemToItemDTO(Item item) {
+        return ItemDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId(setupRequestID(item))
                 .build();
     }
 
-    public static Item itemDtoToItem(ItemDto dto, User owner) {
+    public static Item itemDtoToItem(ItemDTO dto, User owner) {
         return Item.builder()
                 .id(dto.getId())
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .available(dto.getAvailable())
                 .owner(owner)
+                .build();
+    }
+
+    public static Item itemDtoToItem(ItemDTO dto, User owner, ItemRequest request) {
+        return Item.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .available(dto.getAvailable())
+                .owner(owner)
+                .request(request)
                 .build();
     }
 
@@ -48,5 +61,13 @@ public class ItemMapper {
                 .nextBooking(null)
                 .comments(Collections.emptyList())
                 .build();
+    }
+
+    private static int setupRequestID(Item item) {
+            if (item.getRequest() == null) {
+                return 0;
+            } else {
+                return item.getRequest().getId();
+            }
     }
 }

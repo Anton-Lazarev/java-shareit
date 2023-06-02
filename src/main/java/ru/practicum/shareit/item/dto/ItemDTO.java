@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
-public class ItemDto {
+public class ItemDTO {
     private int id;
     @NotBlank(message = "Item name can't be blank")
     private String name;
@@ -16,4 +16,5 @@ public class ItemDto {
     private String description;
     @NotNull(message = "Item availability can't be null")
     private Boolean available;
+    private Integer requestId;
 }

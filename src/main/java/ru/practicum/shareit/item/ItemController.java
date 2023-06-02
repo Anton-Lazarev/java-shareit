@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.IncomeCommentDTO;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDTO;
 import ru.practicum.shareit.item.dto.ItemWithBookingsAndCommentsDTO;
 import ru.practicum.shareit.item.dto.OutcomeCommentDTO;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -27,7 +28,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") int userID, @Valid @RequestBody ItemDto itemDto) {
+    public ItemDTO create(@RequestHeader("X-Sharer-User-Id") int userID, @Valid @RequestBody ItemDTO itemDto) {
         return itemService.addItem(userID, itemDto);
     }
 
@@ -38,12 +39,17 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemWithBookingsAndCommentsDTO> findItemsByOwner(@RequestHeader("X-Sharer-User-Id") int userID) {
-        return itemService.getItemsOfUserByID(userID);
+    public Collection<ItemWithBookingsAndCommentsDTO> findItemsByOwner(@RequestHeader("X-Sharer-User-Id") int userID,
+                                                                       @RequestParam(defaultValue = "0", required = false) int from,
+                                                                       @RequestParam(defaultValue = "5", required = false) int size) {
+        if (from < 0 || size <= 0) {
+            throw new ValidationException("Page or size can't be negative");
+        }
+        return itemService.getItemsOfUserByID(userID, from, size);
     }
 
     @PatchMapping("/{id}")
-    public ItemDto patch(@RequestHeader("X-Sharer-User-Id") int userID, @PathVariable int id, @RequestBody ItemDto itemDto) {
+    public ItemDTO patch(@RequestHeader("X-Sharer-User-Id") int userID, @PathVariable int id, @RequestBody ItemDTO itemDto) {
         itemDto.setId(id);
         return itemService.patchItem(userID, itemDto);
     }
@@ -54,10 +60,15 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> findItemsByText(@RequestParam String text) {
+    public Collection<ItemDTO> findItemsByText(@RequestParam String text,
+                                               @RequestParam(defaultValue = "0", required = false) int from,
+                                               @RequestParam(defaultValue = "5", required = false) int size) {
         if (text == null || text.isBlank()) {
             return Collections.emptyList();
         }
-        return itemService.searchItemsByText(text);
+        if (from < 0 || size <= 0) {
+            throw new ValidationException("Page or size can't be negative");
+        }
+        return itemService.searchItemsByText(text, from, size);
     }
 }

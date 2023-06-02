@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
-public class UserDto {
+public class UserDTO {
     private int id;
     @NotBlank(message = "User name can't be blank")
     private String name;
