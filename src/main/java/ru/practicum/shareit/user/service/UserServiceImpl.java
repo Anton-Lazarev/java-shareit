@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @Override
-    public Collection<UserDTO> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         ArrayList<UserDTO> usersDTO = new ArrayList<>();
         for (User user : repository.findAll()) {
             usersDTO.add(UserMapper.userToUserDTO(user));

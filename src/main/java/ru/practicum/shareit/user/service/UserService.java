@@ -2,10 +2,10 @@ package ru.practicum.shareit.user.service;
 
 import ru.practicum.shareit.user.dto.UserDTO;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface UserService {
-    Collection<UserDTO> getAllUsers();
+    List<UserDTO> getAllUsers();
 
     UserDTO addUser(UserDTO userDto);
 
