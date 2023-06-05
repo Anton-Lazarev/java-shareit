@@ -19,6 +19,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public OutcomeItemRequestDTO addRequest(int userID, IncomeItemRequestDTO dto) {
+        dto.setCreated(LocalDateTime.now());
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
@@ -65,7 +67,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (!requestRepository.existsById(requestID)) {
             throw new ItemRequestNotFoundException("Item request with ID " + requestID + " not presented");
         }
-        return RequestMapper.itemRequestToOutcomeRequestWithItemsDTO(requestRepository.findById(requestID).get(),
+        return RequestMapper.itemRequestToOutcomeRequestWithItemsDTO(
+                requestRepository.findById(requestID).get(),
                 prepareItemsForRequestDTO(requestID));
     }
 

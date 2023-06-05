@@ -16,7 +16,6 @@ import ru.practicum.shareit.request.service.ItemRequestService;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -28,7 +27,6 @@ public class ItemRequestController {
     @PostMapping
     public OutcomeItemRequestDTO create(@RequestHeader("X-Sharer-User-Id") int userID,
                                         @Valid @RequestBody IncomeItemRequestDTO dto) {
-        dto.setCreated(LocalDateTime.now());
         return requestService.addRequest(userID, dto);
     }
 
