@@ -28,6 +28,7 @@ import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -99,9 +100,9 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemID).get();
         log.info("Getting item with ID {}", itemID);
         if (item.getOwner().getId() == userID) {
-            return createOutcomeItemDtoWithBookingsAndComments(item);
+            return createOutcomeItemDtoWithBookingsAndComments(item, LocalDateTime.now());
         }
-        return createOutcomeItemDtoOnlyWithComments(itemRepository.findById(itemID).get());
+        return createOutcomeItemDtoOnlyWithComments(item);
     }
 
     @Override
@@ -113,7 +114,7 @@ public class ItemServiceImpl implements ItemService {
         List<Item> itemsOfUser = itemRepository.findAllByUserId(userID, pageable);
         List<ItemWithBookingsAndCommentsDTO> itemsDTO = new ArrayList<>();
         for (Item item : itemsOfUser) {
-            ItemWithBookingsAndCommentsDTO dto = createOutcomeItemDtoWithBookingsAndComments(item);
+            ItemWithBookingsAndCommentsDTO dto = createOutcomeItemDtoWithBookingsAndComments(item, LocalDateTime.now());
             itemsDTO.add(dto);
         }
         log.info("Get itemsDTO list with size {}", itemsDTO.size());
@@ -141,7 +142,7 @@ public class ItemServiceImpl implements ItemService {
         if (bookingRepository.findOneApprovedBookingOfUser(userID).isEmpty()) {
             throw new UserNotBookedItemException("User with ID " + userID + " didn't book item");
         }
-        if (bookingRepository.findOneApprovedBookingOfItemInPast(itemID, LocalDateTime.now()).isEmpty()) {
+        if (bookingRepository.findOneApprovedBookingOfItemInPast(itemID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)).isEmpty()) {
             throw new BookingValidationException("Item with ID " + itemID + " didn't book yet");
         }
         Comment newComment = CommentMapper.incomeCommentDtoToComment(dto,
@@ -152,9 +153,9 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapper.commentToOutcomeCommentDTO(newComment);
     }
 
-    private ItemWithBookingsAndCommentsDTO createOutcomeItemDtoWithBookingsAndComments(Item item) {
-        Optional<Booking> last = bookingRepository.findPreviousItemBooking(item.getId(), LocalDateTime.now());
-        Optional<Booking> next = bookingRepository.findNextItemBooking(item.getId(), LocalDateTime.now());
+    private ItemWithBookingsAndCommentsDTO createOutcomeItemDtoWithBookingsAndComments(Item item, LocalDateTime moment) {
+        Optional<Booking> last = bookingRepository.findPreviousItemBooking(item.getId(), moment);
+        Optional<Booking> next = bookingRepository.findNextItemBooking(item.getId(), moment);
         ItemWithBookingsAndCommentsDTO dto = ItemMapper.itemToItemWithBookingsAndCommentsDTO(item);
         if (last.isEmpty()) {
             dto.setLastBooking(null);
