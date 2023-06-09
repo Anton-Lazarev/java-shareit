@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,12 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = BookingController.class)
 public class BookingControllerTests {
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    MockMvc mvc;
+    private final ObjectMapper objectMapper;
+    private final MockMvc mvc;
     @MockBean
-    BookingService service;
+    private BookingService service;
+
+    @Autowired
+    public BookingControllerTests(ObjectMapper objectMapper, MockMvc mvc) {
+        this.mvc = mvc;
+        this.objectMapper = objectMapper;
+    }
 
     @SneakyThrows
     @Test

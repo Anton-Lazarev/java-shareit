@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @AllArgsConstructor
+@Transactional
 public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
@@ -90,6 +92,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemWithBookingsAndCommentsDTO getItemByID(int itemID, int userID) {
         if (!itemRepository.existsById(itemID)) {
             throw new ItemNotFoundException("Item with ID " + itemID + " not present");
@@ -106,6 +109,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<ItemWithBookingsAndCommentsDTO> getItemsOfUserByID(int userID, int from, int size) {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
@@ -122,6 +126,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<ItemDTO> searchItemsByText(String text, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
         List<ItemDTO> itemsDTO = itemRepository.findItemByNameAndDesc(text.toLowerCase(), pageable)

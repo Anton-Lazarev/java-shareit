@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.dto.ItemDTO;
 import ru.practicum.shareit.request.dto.IncomeItemRequestDTO;
 import ru.practicum.shareit.request.dto.OutcomeItemRequestDTO;
@@ -11,7 +10,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class RequestMapper {
     public static ItemRequest incomeDtoToItemRequest(IncomeItemRequestDTO dto, User user) {
         return ItemRequest.builder()

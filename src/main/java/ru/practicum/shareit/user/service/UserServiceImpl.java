@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.EmailAlreadyExistException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.UserMapper;
@@ -17,10 +18,12 @@ import java.util.Optional;
 @Service
 @Slf4j
 @AllArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
         ArrayList<UserDTO> usersDTO = new ArrayList<>();
         for (User user : repository.findAll()) {
@@ -67,6 +70,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDTO getUserByID(int id) {
         Optional<User> user = repository.findById(id);
         if (user.isEmpty()) {

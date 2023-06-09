@@ -562,12 +562,12 @@ public class BookingServiceTests {
     }
 
     @Test
-    void getBookingsOfUserByState_correctGettingStateByDefault() {
+    void getBookingsOfUserByState_correctGettingStateALL() {
         int userID = 741;
         int from = 0;
         int size = 5;
         Pageable pageable = PageRequest.of(from / size, size);
-        String state = "lll";
+        String state = "ALL";
         User owner = User.builder().id(74).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         Item item = Item.builder().id(63).owner(owner).name("dollar").description("one dollar").available(true).build();
@@ -779,12 +779,12 @@ public class BookingServiceTests {
     }
 
     @Test
-    void getBookingsOfUserItemsByState_correctGettingStateByDefault() {
+    void getBookingsOfUserItemsByState_correctGettingStateALL() {
         int userID = 555;
         int from = 0;
         int size = 5;
         Pageable pageable = PageRequest.of(from / size, size);
-        String state = "qwe";
+        String state = "ALL";
         User owner = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(417).name("Jo").email("j@i.jo").build();
         Item item = Item.builder().id(63).owner(owner).name("dollar").description("one dollar").available(true).build();

@@ -13,5 +13,5 @@ public class OutcomeItemRequestWithItemsDTO {
     private int id;
     private String description;
     private LocalDateTime created;
-    List<ItemDTO> items;
+    private List<ItemDTO> items;
 }

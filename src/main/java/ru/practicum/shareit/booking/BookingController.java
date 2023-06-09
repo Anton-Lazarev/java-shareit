@@ -47,9 +47,9 @@ public class BookingController {
 
     @GetMapping
     public List<OutcomeBookingDTO> findBookingsOfUserInState(@RequestHeader("X-Sharer-User-Id") int userID,
-                                                             @RequestParam(required = false, defaultValue = "ALL") String state,
-                                                             @RequestParam(defaultValue = "0", required = false) int from,
-                                                             @RequestParam(defaultValue = "5", required = false) int size) {
+                                                             @RequestParam(defaultValue = "ALL") String state,
+                                                             @RequestParam(defaultValue = "0") int from,
+                                                             @RequestParam(defaultValue = "5") int size) {
         BookingStateRequest stateRequest = BookingStateRequest.from(state)
                 .orElseThrow(() -> new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS"));
         if (from < 0 || size <= 0) {
@@ -60,9 +60,9 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<OutcomeBookingDTO> findBookingsOfItemOwnerByState(@RequestHeader("X-Sharer-User-Id") int userID,
-                                                                  @RequestParam(required = false, defaultValue = "ALL") String state,
-                                                                  @RequestParam(defaultValue = "0", required = false) int from,
-                                                                  @RequestParam(defaultValue = "5", required = false) int size) {
+                                                                  @RequestParam(defaultValue = "ALL") String state,
+                                                                  @RequestParam(defaultValue = "0") int from,
+                                                                  @RequestParam(defaultValue = "5") int size) {
         BookingStateRequest stateRequest = BookingStateRequest.from(state)
                 .orElseThrow(() -> new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS"));
         if (from < 0 || size <= 0) {

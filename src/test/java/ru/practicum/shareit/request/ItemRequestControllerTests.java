@@ -30,12 +30,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = ItemRequestController.class)
 public class ItemRequestControllerTests {
-    @Autowired
-    ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+    private final MockMvc mvc;
     @MockBean
-    ItemRequestService service;
+    private ItemRequestService service;
+
     @Autowired
-    MockMvc mvc;
+    public ItemRequestControllerTests(ObjectMapper mapper, MockMvc mvc) {
+        this.objectMapper = mapper;
+        this.mvc = mvc;
+    }
 
     @SneakyThrows
     @Test

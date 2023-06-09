@@ -40,8 +40,8 @@ public class ItemController {
 
     @GetMapping
     public Collection<ItemWithBookingsAndCommentsDTO> findItemsByOwner(@RequestHeader("X-Sharer-User-Id") int userID,
-                                                                       @RequestParam(defaultValue = "0", required = false) int from,
-                                                                       @RequestParam(defaultValue = "5", required = false) int size) {
+                                                                       @RequestParam(defaultValue = "0") int from,
+                                                                       @RequestParam(defaultValue = "5") int size) {
         if (from < 0 || size <= 0) {
             throw new ValidationException("Page or size can't be negative");
         }
@@ -61,8 +61,8 @@ public class ItemController {
 
     @GetMapping("/search")
     public Collection<ItemDTO> findItemsByText(@RequestParam String text,
-                                               @RequestParam(defaultValue = "0", required = false) int from,
-                                               @RequestParam(defaultValue = "5", required = false) int size) {
+                                               @RequestParam(defaultValue = "0") int from,
+                                               @RequestParam(defaultValue = "5") int size) {
         if (text == null || text.isBlank()) {
             return Collections.emptyList();
         }
