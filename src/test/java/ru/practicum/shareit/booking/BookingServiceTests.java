@@ -131,10 +131,11 @@ public class BookingServiceTests {
     void addBooking_exception_whenStartEqualsEnd() {
         int userID = 83;
         int itemID = 54;
+        LocalDateTime moment = LocalDateTime.now().plusDays(2);
         User owner = User.builder().id(74).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         Item item = Item.builder().id(itemID).owner(owner).name("dollar").description("one dollar").available(true).build();
-        IncomeBookingDTO incomeDTO = IncomeBookingDTO.builder().start(LocalDateTime.now().plusDays(2)).end(LocalDateTime.now().plusDays(2)).itemId(itemID).build();
+        IncomeBookingDTO incomeDTO = IncomeBookingDTO.builder().start(moment).end(moment).itemId(itemID).build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
         when(itemRepository.existsById(itemID)).thenReturn(true);
