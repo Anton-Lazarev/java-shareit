@@ -17,5 +17,5 @@ public class IncomeBookingDTO {
     @FutureOrPresent
     private LocalDateTime end;
     @NotNull
-    private int itemId;
+    private Integer itemId;
 }

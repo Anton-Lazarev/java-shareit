@@ -22,6 +22,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,7 @@ public class BookingServiceImpl implements BookingService {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
         if (!bookingRepository.existsById(bookingID)) {
-            throw new BookingNotFoundException("Booking with ID " + bookingID + " not presented");
+            throw new BookingNotFoundException("Booking with ID " + bookingID + " not present");
         }
         Booking booking = bookingRepository.findById(bookingID).get();
         if (userID != booking.getItem().getOwner().getId()) {
@@ -74,8 +75,9 @@ public class BookingServiceImpl implements BookingService {
         } else {
             booking.setStatus(BookingStatus.REJECTED);
         }
+        bookingRepository.save(booking);
         log.info("Change status of booking with ID {} on {}", bookingID, booking.getStatus().name());
-        return BookingMapper.bookingToOutcomeBookingDTO(bookingRepository.save(booking));
+        return BookingMapper.bookingToOutcomeBookingDTO(booking);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
         if (!bookingRepository.existsById(bookingID)) {
-            throw new BookingNotFoundException("Booking with ID " + bookingID + " not presented");
+            throw new BookingNotFoundException("Booking with ID " + bookingID + " not present");
         }
         Booking booking = bookingRepository.findById(bookingID).get();
         if (booking.getBooker().getId() != userID && booking.getItem().getOwner().getId() != userID) {
@@ -104,16 +106,16 @@ public class BookingServiceImpl implements BookingService {
         List<OutcomeBookingDTO> dtos;
         switch (state.toUpperCase()) {
             case ("CURRENT"):
-                bookings = bookingRepository.findBookingsOfUserInStateCURRENT(userID, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findBookingsOfUserInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
                 break;
             case ("PAST"):
-                bookings = bookingRepository.findBookingsOfUserInStatePAST(userID, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findBookingsOfUserInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
                 break;
             case ("FUTURE"):
-                bookings = bookingRepository.findBookingsOfUserInStateFUTURE(userID, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findBookingsOfUserInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
                 break;
             case ("WAITING"):
-                bookings = bookingRepository.findBookingsOfUserInStateWAITING(userID, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findBookingsOfUserInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
                 break;
             case ("REJECTED"):
                 bookings = bookingRepository.findBookingsOfUserInStateREJECTED(userID, pageable);
@@ -138,16 +140,16 @@ public class BookingServiceImpl implements BookingService {
         List<OutcomeBookingDTO> dtos;
         switch (state.toUpperCase()) {
             case ("CURRENT"):
-                bookings = bookingRepository.findBookingsOfItemOwnerInStateCURRENT(userID, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findBookingsOfItemOwnerInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
                 break;
             case ("PAST"):
-                bookings = bookingRepository.findBookingsOfItemOwnerInStatePAST(userID, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findBookingsOfItemOwnerInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
                 break;
             case ("FUTURE"):
-                bookings = bookingRepository.findBookingsOfItemOwnerInStateFUTURE(userID, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findBookingsOfItemOwnerInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
                 break;
             case ("WAITING"):
-                bookings = bookingRepository.findBookingsOfItemOwnerInStateWAITING(userID, LocalDateTime.now(), pageable);
+                bookings = bookingRepository.findBookingsOfItemOwnerInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
                 break;
             case ("REJECTED"):
                 bookings = bookingRepository.findBookingsOfItemOwnerInStateREJECTED(userID, pageable);
