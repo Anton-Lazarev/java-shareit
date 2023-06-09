@@ -2,10 +2,9 @@ package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.Paginator;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -114,8 +113,7 @@ public class ItemServiceImpl implements ItemService {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
-        Pageable pageable = PageRequest.of(from / size, size);
-        List<Item> itemsOfUser = itemRepository.findAllByUserId(userID, pageable);
+        List<Item> itemsOfUser = itemRepository.findAllByUserId(userID, new Paginator(from, size));
         List<ItemWithBookingsAndCommentsDTO> itemsDTO = new ArrayList<>();
         for (Item item : itemsOfUser) {
             ItemWithBookingsAndCommentsDTO dto = createOutcomeItemDtoWithBookingsAndComments(item, LocalDateTime.now());
@@ -128,8 +126,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public Collection<ItemDTO> searchItemsByText(String text, int from, int size) {
-        Pageable pageable = PageRequest.of(from / size, size);
-        List<ItemDTO> itemsDTO = itemRepository.findItemByNameAndDesc(text.toLowerCase(), pageable)
+        List<ItemDTO> itemsDTO = itemRepository.findItemByNameAndDesc(text.toLowerCase(), new Paginator(from, size))
                 .stream().map(ItemMapper::itemToItemDTO)
                 .collect(Collectors.toList());
         log.info("Get itemsDTO list with size {}", itemsDTO.size());

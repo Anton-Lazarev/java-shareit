@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import ru.practicum.shareit.Paginator;
 import ru.practicum.shareit.exceptions.ItemRequestNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.model.Item;
@@ -227,7 +228,7 @@ public class ItemRequestsServiceTests {
         int userID = 12;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size, Sort.by("created").descending());
+        Paginator pageable = new Paginator(from, size);
 
         when(userRepository.existsById(userID)).thenReturn(true);
         when(requestRepository.findAllFromAnotherUsers(userID, pageable)).thenReturn(Collections.emptyList());
@@ -243,7 +244,7 @@ public class ItemRequestsServiceTests {
         int requestID = 34;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size, Sort.by("created").descending());
+        Paginator pageable = new Paginator(from, size);
         User user = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         List<ItemRequest> requests = List.of(ItemRequest.builder()
                 .id(requestID)
@@ -270,7 +271,7 @@ public class ItemRequestsServiceTests {
         int requestID = 18;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size, Sort.by("created").descending());
+        Paginator pageable = new Paginator(from, size);
         User user = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         List<ItemRequest> requests = List.of(ItemRequest.builder()
                 .id(requestID)

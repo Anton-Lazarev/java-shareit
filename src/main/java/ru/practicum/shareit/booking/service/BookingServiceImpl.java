@@ -2,10 +2,9 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.Paginator;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingStateRequest;
 import ru.practicum.shareit.booking.dto.BookingStatus;
@@ -107,28 +106,28 @@ public class BookingServiceImpl implements BookingService {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
-        Pageable pageable = PageRequest.of(from / size, size);
+        Paginator paginator = new Paginator(from, size);
         List<Booking> bookings;
         List<OutcomeBookingDTO> dtos;
         BookingStateRequest bookingState = BookingStateRequest.valueOf(state.toUpperCase());
         switch (bookingState) {
             case CURRENT:
-                bookings = bookingRepository.findBookingsOfUserInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+                bookings = bookingRepository.findBookingsOfUserInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
                 break;
             case PAST:
-                bookings = bookingRepository.findBookingsOfUserInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+                bookings = bookingRepository.findBookingsOfUserInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findBookingsOfUserInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+                bookings = bookingRepository.findBookingsOfUserInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
                 break;
             case WAITING:
-                bookings = bookingRepository.findBookingsOfUserInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+                bookings = bookingRepository.findBookingsOfUserInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findBookingsOfUserInStateREJECTED(userID, pageable);
+                bookings = bookingRepository.findBookingsOfUserInStateREJECTED(userID, paginator);
                 break;
             case ALL:
-                bookings = bookingRepository.findBookingsOfUserInStateALL(userID, pageable);
+                bookings = bookingRepository.findBookingsOfUserInStateALL(userID, paginator);
                 break;
             default:
                 bookings = Collections.emptyList();
@@ -146,28 +145,28 @@ public class BookingServiceImpl implements BookingService {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
-        Pageable pageable = PageRequest.of(from / size, size);
+        Paginator paginator = new Paginator(from, size);
         List<Booking> bookings;
         List<OutcomeBookingDTO> dtos;
         BookingStateRequest bookingState = BookingStateRequest.valueOf(state.toUpperCase());
         switch (bookingState) {
             case CURRENT:
-                bookings = bookingRepository.findBookingsOfItemOwnerInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+                bookings = bookingRepository.findBookingsOfItemOwnerInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
                 break;
             case PAST:
-                bookings = bookingRepository.findBookingsOfItemOwnerInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+                bookings = bookingRepository.findBookingsOfItemOwnerInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findBookingsOfItemOwnerInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+                bookings = bookingRepository.findBookingsOfItemOwnerInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
                 break;
             case WAITING:
-                bookings = bookingRepository.findBookingsOfItemOwnerInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+                bookings = bookingRepository.findBookingsOfItemOwnerInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findBookingsOfItemOwnerInStateREJECTED(userID, pageable);
+                bookings = bookingRepository.findBookingsOfItemOwnerInStateREJECTED(userID, paginator);
                 break;
             case ALL:
-                bookings = bookingRepository.findBookingsOfItemOwnerInStateALL(userID, pageable);
+                bookings = bookingRepository.findBookingsOfItemOwnerInStateALL(userID, paginator);
                 break;
             default:
                 bookings = Collections.emptyList();

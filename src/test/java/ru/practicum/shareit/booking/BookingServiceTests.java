@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import ru.practicum.shareit.Paginator;
 import ru.practicum.shareit.booking.dto.BookingStatus;
 import ru.practicum.shareit.booking.dto.IncomeBookingDTO;
 import ru.practicum.shareit.booking.dto.OutcomeBookingDTO;
@@ -397,7 +397,7 @@ public class BookingServiceTests {
         int userID = 741;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "CURRENT";
         User owner = User.builder().id(74).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(userID).name("Jo").email("j@i.jo").build();
@@ -412,11 +412,11 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfUserInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable))
+        when(bookingRepository.findBookingsOfUserInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator))
                 .thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -431,7 +431,7 @@ public class BookingServiceTests {
         int userID = 741;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "PAST";
         User owner = User.builder().id(74).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(userID).name("Jo").email("j@i.jo").build();
@@ -446,11 +446,11 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfUserInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable))
+        when(bookingRepository.findBookingsOfUserInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator))
                 .thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -465,7 +465,7 @@ public class BookingServiceTests {
         int userID = 741;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "FUTURE";
         User owner = User.builder().id(74).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(userID).name("Jo").email("j@i.jo").build();
@@ -480,11 +480,11 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfUserInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable))
+        when(bookingRepository.findBookingsOfUserInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator))
                 .thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -499,7 +499,7 @@ public class BookingServiceTests {
         int userID = 741;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "WAITING";
         User owner = User.builder().id(74).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(userID).name("Jo").email("j@i.jo").build();
@@ -514,11 +514,11 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfUserInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable))
+        when(bookingRepository.findBookingsOfUserInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator))
                 .thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -533,7 +533,7 @@ public class BookingServiceTests {
         int userID = 741;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "REJECTED";
         User owner = User.builder().id(74).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(userID).name("Jo").email("j@i.jo").build();
@@ -548,10 +548,10 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfUserInStateREJECTED(userID, pageable)).thenReturn(List.of(booking));
+        when(bookingRepository.findBookingsOfUserInStateREJECTED(userID, paginator)).thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStateREJECTED(userID, pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStateREJECTED(userID, paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -566,7 +566,7 @@ public class BookingServiceTests {
         int userID = 741;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "ALL";
         User owner = User.builder().id(74).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(userID).name("Jo").email("j@i.jo").build();
@@ -581,10 +581,10 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfUserInStateALL(userID, pageable)).thenReturn(List.of(booking));
+        when(bookingRepository.findBookingsOfUserInStateALL(userID, paginator)).thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStateALL(userID, pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfUserInStateALL(userID, paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -613,7 +613,7 @@ public class BookingServiceTests {
         int userID = 555;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "CURRENT";
         User owner = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(417).name("Jo").email("j@i.jo").build();
@@ -628,11 +628,11 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfItemOwnerInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable))
+        when(bookingRepository.findBookingsOfItemOwnerInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator))
                 .thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserItemsByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStateCURRENT(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -647,7 +647,7 @@ public class BookingServiceTests {
         int userID = 555;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "PAST";
         User owner = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(417).name("Jo").email("j@i.jo").build();
@@ -662,11 +662,11 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfItemOwnerInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable))
+        when(bookingRepository.findBookingsOfItemOwnerInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator))
                 .thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserItemsByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStatePAST(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -681,7 +681,7 @@ public class BookingServiceTests {
         int userID = 555;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "FUTURE";
         User owner = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(417).name("Jo").email("j@i.jo").build();
@@ -696,11 +696,11 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfItemOwnerInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable))
+        when(bookingRepository.findBookingsOfItemOwnerInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator))
                 .thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserItemsByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStateFUTURE(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -715,7 +715,7 @@ public class BookingServiceTests {
         int userID = 555;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "WAITING";
         User owner = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(417).name("Jo").email("j@i.jo").build();
@@ -730,11 +730,11 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfItemOwnerInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable))
+        when(bookingRepository.findBookingsOfItemOwnerInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator))
                 .thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserItemsByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStateWAITING(userID, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -749,7 +749,7 @@ public class BookingServiceTests {
         int userID = 555;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "REJECTED";
         User owner = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(417).name("Jo").email("j@i.jo").build();
@@ -764,11 +764,11 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfItemOwnerInStateREJECTED(userID, pageable))
+        when(bookingRepository.findBookingsOfItemOwnerInStateREJECTED(userID, paginator))
                 .thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserItemsByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStateREJECTED(userID, pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStateREJECTED(userID, paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());
@@ -783,7 +783,7 @@ public class BookingServiceTests {
         int userID = 555;
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable paginator = new Paginator(from, size);
         String state = "ALL";
         User owner = User.builder().id(userID).name("Jo").email("j@i.jo").build();
         User booker = User.builder().id(417).name("Jo").email("j@i.jo").build();
@@ -798,11 +798,11 @@ public class BookingServiceTests {
                 .build();
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(bookingRepository.findBookingsOfItemOwnerInStateALL(userID, pageable))
+        when(bookingRepository.findBookingsOfItemOwnerInStateALL(userID, paginator))
                 .thenReturn(List.of(booking));
         List<OutcomeBookingDTO> dtos = service.getBookingsOfUserItemsByState(userID, state, from, size);
 
-        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStateALL(userID, pageable);
+        verify(bookingRepository, atMostOnce()).findBookingsOfItemOwnerInStateALL(userID, paginator);
         assertEquals(1, dtos.size());
         assertEquals(booking.getId(), dtos.get(0).getId());
         assertEquals(booking.getStatus(), dtos.get(0).getStatus());

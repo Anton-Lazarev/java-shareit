@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import ru.practicum.shareit.Paginator;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.BookingValidationException;
@@ -378,14 +378,15 @@ public class ItemServiceTests {
         int userID = 14;
         int from = 0;
         int size = 5;
+        Paginator paginator = new Paginator(from, size);
         User owner = User.builder().id(userID).name("jo").email("j@i.jo").build();
         List<Item> items = List.of(Item.builder().id(75).name("dollar").description("one dollar").owner(owner).available(true).build());
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(itemRepository.findAllByUserId(userID, PageRequest.of(from / size, size))).thenReturn(items);
+        when(itemRepository.findAllByUserId(userID, paginator)).thenReturn(items);
         List<ItemWithBookingsAndCommentsDTO> dtos = List.copyOf(service.getItemsOfUserByID(userID, from, size));
 
-        verify(itemRepository, atMostOnce()).findAllByUserId(userID, PageRequest.of(from / size, size));
+        verify(itemRepository, atMostOnce()).findAllByUserId(userID, paginator);
         assertEquals(1, dtos.size());
         assertEquals(items.get(0).getName(), dtos.get(0).getName());
         assertEquals(items.get(0).getDescription(), dtos.get(0).getDescription());
@@ -401,17 +402,18 @@ public class ItemServiceTests {
         int itemID = 57;
         int from = 0;
         int size = 5;
+        Paginator paginator = new Paginator(from, size);
         User owner = User.builder().id(userID).name("jo").email("j@i.jo").build();
         User author = User.builder().id(85).name("leo").email("l@e.o").build();
         List<Item> items = List.of(Item.builder().id(itemID).name("dollar").description("one dollar").owner(owner).available(true).build());
         List<Comment> comments = List.of(Comment.builder().id(43).author(author).item(items.get(0)).text("love money").created(LocalDateTime.now().minusDays(1)).build());
 
         when(userRepository.existsById(userID)).thenReturn(true);
-        when(itemRepository.findAllByUserId(userID, PageRequest.of(from / size, size))).thenReturn(items);
+        when(itemRepository.findAllByUserId(userID, paginator)).thenReturn(items);
         when(commentRepository.findAllByItemID(items.get(0).getId())).thenReturn(comments);
         List<ItemWithBookingsAndCommentsDTO> dtos = List.copyOf(service.getItemsOfUserByID(userID, from, size));
 
-        verify(itemRepository, atMostOnce()).findAllByUserId(userID, PageRequest.of(from / size, size));
+        verify(itemRepository, atMostOnce()).findAllByUserId(userID, paginator);
         verify(commentRepository, atMostOnce()).findAllByItemID(items.get(0).getId());
         assertEquals(items.get(0).getId(), dtos.get(0).getId());
         assertEquals(items.get(0).getName(), dtos.get(0).getName());
@@ -430,12 +432,12 @@ public class ItemServiceTests {
         String text = "mars";
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Paginator paginator = new Paginator(from, size);
 
-        when(itemRepository.findItemByNameAndDesc(text, pageable)).thenReturn(Collections.emptyList());
+        when(itemRepository.findItemByNameAndDesc(text, paginator)).thenReturn(Collections.emptyList());
         List<ItemDTO> dtos = List.copyOf(service.searchItemsByText(text, from, size));
 
-        verify(itemRepository, atMostOnce()).findItemByNameAndDesc(text, pageable);
+        verify(itemRepository, atMostOnce()).findItemByNameAndDesc(text, paginator);
         assertEquals(0, dtos.size());
     }
 
@@ -444,14 +446,14 @@ public class ItemServiceTests {
         String text = "dollar";
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Paginator paginator = new Paginator(from, size);
         User owner = User.builder().id(86).name("jo").email("j@i.jo").build();
         Item item = Item.builder().id(12).name("dollar").description("one dollar").owner(owner).available(true).build();
 
-        when(itemRepository.findItemByNameAndDesc(text, pageable)).thenReturn(List.of(item));
+        when(itemRepository.findItemByNameAndDesc(text, paginator)).thenReturn(List.of(item));
         List<ItemDTO> dtos = List.copyOf(service.searchItemsByText(text, from, size));
 
-        verify(itemRepository, atMostOnce()).findItemByNameAndDesc(text, pageable);
+        verify(itemRepository, atMostOnce()).findItemByNameAndDesc(text, paginator);
         assertEquals(1, dtos.size());
         assertEquals(item.getId(), dtos.get(0).getId());
         assertEquals(item.getName(), dtos.get(0).getName());
@@ -464,14 +466,14 @@ public class ItemServiceTests {
         String text = "dOLl";
         int from = 0;
         int size = 5;
-        Pageable pageable = PageRequest.of(from / size, size);
+        Paginator paginator = new Paginator(from, size);
         User owner = User.builder().id(86).name("jo").email("j@i.jo").build();
         Item item = Item.builder().id(12).name("dollar").description("one dollar").owner(owner).available(true).build();
 
-        when(itemRepository.findItemByNameAndDesc(text.toLowerCase(), pageable)).thenReturn(List.of(item));
+        when(itemRepository.findItemByNameAndDesc(text.toLowerCase(), paginator)).thenReturn(List.of(item));
         List<ItemDTO> dtos = List.copyOf(service.searchItemsByText(text, from, size));
 
-        verify(itemRepository, atMostOnce()).findItemByNameAndDesc(text, pageable);
+        verify(itemRepository, atMostOnce()).findItemByNameAndDesc(text, paginator);
         assertEquals(1, dtos.size());
         assertEquals(item.getId(), dtos.get(0).getId());
         assertEquals(item.getName(), dtos.get(0).getName());

@@ -2,11 +2,9 @@ package ru.practicum.shareit.request.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.Paginator;
 import ru.practicum.shareit.exceptions.ItemRequestNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
@@ -82,9 +80,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
         }
-        Pageable pageable = PageRequest.of(from / size, size, Sort.by("created").descending());
         List<OutcomeItemRequestWithItemsDTO> outcomeDTOs = new ArrayList<>();
-        for (ItemRequest request : requestRepository.findAllFromAnotherUsers(userID, pageable)) {
+        for (ItemRequest request : requestRepository.findAllFromAnotherUsers(userID, new Paginator(from, size))) {
             outcomeDTOs.add(RequestMapper.itemRequestToOutcomeRequestWithItemsDTO(request,
                     prepareItemsForRequestDTO(request.getId())));
         }
