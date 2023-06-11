@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,23 +22,27 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/requests")
 @AllArgsConstructor
+@Slf4j
 public class ItemRequestController {
     private final ItemRequestService requestService;
 
     @PostMapping
     public OutcomeItemRequestDTO create(@RequestHeader("X-Sharer-User-Id") int userID,
                                         @Valid @RequestBody IncomeItemRequestDTO dto) {
+        log.info("POST to /requests from userID {} and {}", userID, dto.toString());
         return requestService.addRequest(userID, dto);
     }
 
     @GetMapping
     public List<OutcomeItemRequestWithItemsDTO> getOwnRequests(@RequestHeader("X-Sharer-User-Id") int userID) {
+        log.info("GET to /requests from userID {}", userID);
         return requestService.getRequestsOfUserByID(userID);
     }
 
     @GetMapping("/{requestId}")
     public OutcomeItemRequestWithItemsDTO findRequestByID(@RequestHeader("X-Sharer-User-Id") int userID,
                                                           @PathVariable int requestId) {
+        log.info("GET to /requests/{} from userID {}", requestId, userID);
         return requestService.getRequestByID(userID, requestId);
     }
 
@@ -48,6 +53,7 @@ public class ItemRequestController {
         if (from < 0 || size <= 0) {
             throw new ValidationException("Page or size can't be negative");
         }
+        log.info("GET to /requests/all from userID {} with from {} and size {}", userID, from, size);
         return requestService.getPageOfOtherUsersRequests(userID, from, size);
     }
 }

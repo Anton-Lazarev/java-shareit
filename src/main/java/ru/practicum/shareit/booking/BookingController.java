@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +24,14 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/bookings")
 @AllArgsConstructor
+@Slf4j
 public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
     public OutcomeBookingDTO create(@RequestHeader("X-Sharer-User-Id") int userID,
                                     @Valid @RequestBody IncomeBookingDTO bookingDto) {
+        log.info("POST to /bookings from userID {} with {}", userID, bookingDto.toString());
         return bookingService.addBooking(userID, bookingDto);
     }
 
@@ -36,12 +39,14 @@ public class BookingController {
     public OutcomeBookingDTO approveBooking(@RequestHeader("X-Sharer-User-Id") int userID,
                                             @PathVariable int bookingID,
                                             @RequestParam boolean approved) {
+        log.info("PATCH to /bookings/{} from userID {} with approved = {}", bookingID, userID, approved);
         return bookingService.changeBookingStatus(userID, bookingID, approved);
     }
 
     @GetMapping("/{bookingID}")
     public OutcomeBookingDTO findBookingByID(@RequestHeader("X-Sharer-User-Id") int userID,
                                              @PathVariable int bookingID) {
+        log.info("GET to /bookings/{} from userID {}", bookingID, userID);
         return bookingService.getBookingByID(userID, bookingID);
     }
 
@@ -55,6 +60,7 @@ public class BookingController {
         if (from < 0 || size <= 0) {
             throw new ValidationException("Page or size can't be negative");
         }
+        log.info("GET to /bookings from userID {} with state {} , from {} , size {}", userID, state, from, size);
         return bookingService.getBookingsOfUserByState(userID, stateRequest.name(), from, size);
     }
 
@@ -68,6 +74,7 @@ public class BookingController {
         if (from < 0 || size <= 0) {
             throw new ValidationException("Page or size can't be negative");
         }
+        log.info("GET to /bookings/owner from userID {} with state {} , from {} , size {}", userID, state, from, size);
         return bookingService.getBookingsOfUserItemsByState(userID, stateRequest.name(), from, size);
     }
 }
