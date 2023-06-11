@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @AllArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
@@ -47,6 +47,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRequestRepository requestRepository;
 
     @Override
+    @Transactional
     public ItemDTO addItem(int userID, ItemDTO itemDto) {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
@@ -68,6 +69,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDTO patchItem(int userID, ItemDTO itemDto) {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
@@ -91,7 +93,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ItemWithBookingsAndCommentsDTO getItemByID(int itemID, int userID) {
         if (!itemRepository.existsById(itemID)) {
             throw new ItemNotFoundException("Item with ID " + itemID + " not present");
@@ -108,7 +109,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Collection<ItemWithBookingsAndCommentsDTO> getItemsOfUserByID(int userID, int from, int size) {
         if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User with ID " + userID + " not present");
@@ -124,7 +124,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Collection<ItemDTO> searchItemsByText(String text, int from, int size) {
         List<ItemDTO> itemsDTO = itemRepository.findItemByNameAndDesc(text.toLowerCase(), new Paginator(from, size))
                 .stream().map(ItemMapper::itemToItemDTO)
@@ -134,6 +133,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public OutcomeCommentDTO addCommentToItemByUser(int itemID, int userID, IncomeCommentDTO dto) {
         if (!itemRepository.existsById(itemID)) {
             throw new ItemNotFoundException("Item with ID " + itemID + " not present");

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @UtilityClass
 public class CommentMapper {
-    public static Comment incomeCommentDtoToComment(IncomeCommentDTO dto, User author, Item item) {
+    public Comment incomeCommentDtoToComment(IncomeCommentDTO dto, User author, Item item) {
         return Comment.builder()
                 .text(dto.getText())
                 .created(LocalDateTime.now())
@@ -20,7 +20,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public static OutcomeCommentDTO commentToOutcomeCommentDTO(Comment comment) {
+    public OutcomeCommentDTO commentToOutcomeCommentDTO(Comment comment) {
         return OutcomeCommentDTO.builder()
                 .id(comment.getId())
                 .text(comment.getText())

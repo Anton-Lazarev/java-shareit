@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.model.User;
 
 @UtilityClass
 public class UserMapper {
-    public static UserDTO userToUserDTO(User user) {
+    public UserDTO userToUserDTO(User user) {
         return UserDTO.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -15,7 +15,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static User userDtoToUser(UserDTO dto) {
+    public User userDtoToUser(UserDTO dto) {
         return User.builder()
                 .id(dto.getId())
                 .name(dto.getName())
@@ -23,7 +23,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static ShortUser userToShortUser(User user) {
+    public ShortUser userToShortUser(User user) {
         return ShortUser.builder()
                 .id(user.getId())
                 .name(user.getName())

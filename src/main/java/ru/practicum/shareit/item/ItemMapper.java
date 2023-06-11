@@ -12,7 +12,7 @@ import java.util.Collections;
 
 @UtilityClass
 public class ItemMapper {
-    public static ItemDTO itemToItemDTO(Item item) {
+    public ItemDTO itemToItemDTO(Item item) {
         return ItemDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -22,7 +22,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item itemDtoToItem(ItemDTO dto, User owner) {
+    public Item itemDtoToItem(ItemDTO dto, User owner) {
         return Item.builder()
                 .id(dto.getId())
                 .name(dto.getName())
@@ -32,7 +32,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item itemDtoToItem(ItemDTO dto, User owner, ItemRequest request) {
+    public Item itemDtoToItem(ItemDTO dto, User owner, ItemRequest request) {
         return Item.builder()
                 .id(dto.getId())
                 .name(dto.getName())
@@ -43,14 +43,14 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ShortItem itemToShortItem(Item item) {
+    public ShortItem itemToShortItem(Item item) {
         return ShortItem.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .build();
     }
 
-    public static ItemWithBookingsAndCommentsDTO itemToItemWithBookingsAndCommentsDTO(Item item) {
+    public ItemWithBookingsAndCommentsDTO itemToItemWithBookingsAndCommentsDTO(Item item) {
         return ItemWithBookingsAndCommentsDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -62,7 +62,7 @@ public class ItemMapper {
                 .build();
     }
 
-    private static int setupRequestID(Item item) {
+    private int setupRequestID(Item item) {
         if (item.getRequest() == null) {
             return 0;
         } else {

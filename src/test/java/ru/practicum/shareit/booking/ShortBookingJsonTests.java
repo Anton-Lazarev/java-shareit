@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JsonTest
 public class ShortBookingJsonTests {
     @Autowired
-    JacksonTester<ShortBooking> json;
+    private JacksonTester<ShortBooking> json;
 
     @SneakyThrows
     @Test

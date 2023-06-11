@@ -11,29 +11,26 @@ import ru.practicum.shareit.user.dto.UserDTO;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @AllArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
-        ArrayList<UserDTO> usersDTO = new ArrayList<>();
-        for (User user : repository.findAll()) {
-            usersDTO.add(UserMapper.userToUserDTO(user));
-        }
-        log.info("Get usersDTO list with size {}", usersDTO.size());
-        return usersDTO;
+        List<UserDTO> dtos = repository.findAll().stream().map(UserMapper::userToUserDTO).collect(Collectors.toList());
+        log.info("Get usersDTO list with size {}", dtos.size());
+        return dtos;
     }
 
     @Override
+    @Transactional
     public UserDTO addUser(UserDTO userDto) {
         User newUser = repository.save(UserMapper.userDtoToUser(userDto));
         log.info("Создан пользователь с ID {} и именем {}", newUser.getId(), newUser.getName());
@@ -41,6 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDTO patchUser(UserDTO userDto) {
         if (!repository.existsById(userDto.getId())) {
             throw new UserNotFoundException("User with ID " + userDto.getId() + " not present");
@@ -61,6 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(int id) {
         if (!repository.existsById(id)) {
             throw new UserNotFoundException("User with ID " + id + " not present");
@@ -70,7 +69,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public UserDTO getUserByID(int id) {
         Optional<User> user = repository.findById(id);
         if (user.isEmpty()) {

@@ -12,7 +12,7 @@ import java.util.List;
 
 @UtilityClass
 public class RequestMapper {
-    public static ItemRequest incomeDtoToItemRequest(IncomeItemRequestDTO dto, User user) {
+    public ItemRequest incomeDtoToItemRequest(IncomeItemRequestDTO dto, User user) {
         return ItemRequest.builder()
                 .description(dto.getDescription())
                 .requestor(user)
@@ -20,7 +20,7 @@ public class RequestMapper {
                 .build();
     }
 
-    public static OutcomeItemRequestDTO itemRequestToOutcomeRequestDTO(ItemRequest request) {
+    public OutcomeItemRequestDTO itemRequestToOutcomeRequestDTO(ItemRequest request) {
         return OutcomeItemRequestDTO.builder()
                 .id(request.getId())
                 .description(request.getDescription())
@@ -28,8 +28,7 @@ public class RequestMapper {
                 .build();
     }
 
-    public static OutcomeItemRequestWithItemsDTO itemRequestToOutcomeRequestWithItemsDTO(ItemRequest request,
-                                                                                         List<ItemDTO> items) {
+    public OutcomeItemRequestWithItemsDTO itemRequestToOutcomeRequestWithItemsDTO(ItemRequest request, List<ItemDTO> items) {
         return OutcomeItemRequestWithItemsDTO.builder()
                 .id(request.getId())
                 .description(request.getDescription())
