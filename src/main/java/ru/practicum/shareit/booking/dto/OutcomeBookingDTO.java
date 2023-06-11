@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class OutcomeBookingDto {
+public class OutcomeBookingDTO {
     private int id;
     private LocalDateTime start;
     private LocalDateTime end;

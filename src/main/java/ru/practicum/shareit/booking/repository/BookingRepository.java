@@ -1,7 +1,9 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
 
@@ -12,66 +14,85 @@ import java.util.Optional;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
-    @Query(value = "select * from bookings where booker_id = ?1 order by start_date desc", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStateALL(int userID);
+    @Query(value = "select * from bookings where booker_id = :id order by start_date desc", nativeQuery = true)
+    List<Booking> findBookingsOfUserInStateALL(@Param("id") int userID, Pageable pageable);
 
-    @Query(value = "select * from bookings where booker_id = ?1 and (status = 'REJECTED' or status = 'CANCELED') " +
+    @Query(value = "select * from bookings where booker_id = :id and (status = 'REJECTED' or status = 'CANCELED') " +
             "order by start_date desc", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStateREJECTED(int userID);
+    List<Booking> findBookingsOfUserInStateREJECTED(@Param("id") int userID, Pageable pageable);
 
-    @Query(value = "select * from bookings where booker_id = ?1 and end_date < ?2 " +
+    @Query(value = "select * from bookings where booker_id = :id and end_date < :moment " +
             "order by start_date desc", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStatePAST(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfUserInStatePAST(@Param("id") int userID,
+                                                @Param("moment") LocalDateTime dateTime,
+                                                Pageable pageable);
 
-    @Query(value = "select * from bookings where booker_id = ?1 and start_date > ?2 " +
+    @Query(value = "select * from bookings where booker_id = :id and start_date > :moment " +
             "order by start_date desc", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStateFUTURE(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfUserInStateFUTURE(@Param("id") int userID,
+                                                  @Param("moment") LocalDateTime dateTime,
+                                                  Pageable pageable);
 
-    @Query(value = "select * from bookings where booker_id = ?1 " +
-            "and (start_date < ?2 and end_date > ?2) " +
+    @Query(value = "select * from bookings where booker_id = :id " +
+            "and (start_date < :moment and end_date > :moment) " +
             "order by id", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStateCURRENT(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfUserInStateCURRENT(@Param("id") int userID,
+                                                   @Param("moment") LocalDateTime dateTime,
+                                                   Pageable pageable);
 
-    @Query(value = "select * from bookings where booker_id = ?1 and status = 'WAITING' " +
-            "and (start_date < ?2 or end_date > ?2) " +
+    @Query(value = "select * from bookings where booker_id = :id and status = 'WAITING' " +
+            "and (start_date < :moment or end_date > :moment) " +
             "order by start_date desc", nativeQuery = true)
-    List<Booking> findBookingsOfUserInStateWAITING(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfUserInStateWAITING(@Param("id") int userID,
+                                                   @Param("moment") LocalDateTime dateTime,
+                                                   Pageable pageable);
 
-    @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 order by b.start desc")
-    List<Booking> findBookingsOfItemOwnerInStateALL(int userID);
+    @Query("select b from Booking as b join b.item as i where i.owner.id = :id order by b.start desc")
+    List<Booking> findBookingsOfItemOwnerInStateALL(@Param("id") int userID, Pageable pageable);
 
-    @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 " +
-            "and (b.start < ?2 and b.end > ?2) order by b.id")
-    List<Booking> findBookingsOfItemOwnerInStateCURRENT(int userID, LocalDateTime dateTime);
+    @Query("select b from Booking as b join b.item as i where i.owner.id = :id " +
+            "and (b.start < :moment and b.end > :moment) order by b.id")
+    List<Booking> findBookingsOfItemOwnerInStateCURRENT(@Param("id") int userID,
+                                                        @Param("moment") LocalDateTime dateTime,
+                                                        Pageable pageable);
 
-    @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 and b.end < ?2 " +
+    @Query("select b from Booking as b join b.item as i where i.owner.id = :id and b.end < :moment " +
             "order by b.start desc")
-    List<Booking> findBookingsOfItemOwnerInStatePAST(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfItemOwnerInStatePAST(@Param("id") int userID,
+                                                     @Param("moment") LocalDateTime dateTime,
+                                                     Pageable pageable);
 
-    @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 and b.start > ?2 " +
+    @Query("select b from Booking as b join b.item as i where i.owner.id = :id and b.start > :moment " +
             "order by b.start desc")
-    List<Booking> findBookingsOfItemOwnerInStateFUTURE(int userID, LocalDateTime dateTime);
+    List<Booking> findBookingsOfItemOwnerInStateFUTURE(@Param("id") int userID,
+                                                       @Param("moment") LocalDateTime dateTime,
+                                                       Pageable pageable);
 
-    @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 " +
-            "and (b.start < ?2 or b.end > ?2) and b.status = 'WAITING' order by b.start desc")
-    List<Booking> findBookingsOfItemOwnerInStateWAITING(int userID, LocalDateTime dateTime);
+    @Query("select b from Booking as b join b.item as i where i.owner.id = :id " +
+            "and (b.start < :moment or b.end > :moment) and b.status = 'WAITING' order by b.start desc")
+    List<Booking> findBookingsOfItemOwnerInStateWAITING(@Param("id") int userID,
+                                                        @Param("moment") LocalDateTime dateTime,
+                                                        Pageable pageable);
 
-    @Query("select b from Booking as b join b.item as i where i.owner.id = ?1 " +
+    @Query("select b from Booking as b join b.item as i where i.owner.id = :id " +
             "and (b.status = 'CANCELED' or b.status = 'REJECTED') order by b.start desc ")
-    List<Booking> findBookingsOfItemOwnerInStateREJECTED(int userID);
+    List<Booking> findBookingsOfItemOwnerInStateREJECTED(@Param("id") int userID, Pageable pageable);
 
-    @Query(value = "select * from bookings where item_id = ?1 and status = 'APPROVED' " +
-            "and start_date < ?2 order by start_date desc limit 1", nativeQuery = true)
-    Optional<Booking> findPreviousItemBooking(int itemID, LocalDateTime dateTime);
+    @Query(value = "select * from bookings where item_id = :id and status = 'APPROVED' " +
+            "and start_date < :moment order by start_date desc limit 1", nativeQuery = true)
+    Optional<Booking> findPreviousItemBooking(@Param("id") int itemID,
+                                              @Param("moment") LocalDateTime dateTime);
 
-    @Query(value = "select * from bookings where item_id = ?1 and status = 'APPROVED' " +
-            "and start_date > ?2 order by start_date limit 1", nativeQuery = true)
-    Optional<Booking> findNextItemBooking(int itemID, LocalDateTime dateTime);
+    @Query(value = "select * from bookings where item_id = :id and status = 'APPROVED' " +
+            "and start_date > :moment order by start_date limit 1", nativeQuery = true)
+    Optional<Booking> findNextItemBooking(@Param("id") int itemID,
+                                          @Param("moment") LocalDateTime dateTime);
 
-    @Query(value = "select * from bookings where booker_id = ?1 and status = 'APPROVED' limit 1", nativeQuery = true)
-    Optional<Booking> findOneApprovedBookingOfUser(int userID);
+    @Query(value = "select * from bookings where booker_id = :id and status = 'APPROVED' limit 1", nativeQuery = true)
+    Optional<Booking> findOneApprovedBookingOfUser(@Param("id") int userID);
 
-    @Query(value = "select * from bookings where item_id = ?1 and start_date < ?2 " +
+    @Query(value = "select * from bookings where item_id = :id and start_date < :moment " +
             "and status = 'APPROVED' limit 1", nativeQuery = true)
-    Optional<Booking> findOneApprovedBookingOfItemInPast(int itemID, LocalDateTime dateTime);
+    Optional<Booking> findOneApprovedBookingOfItemInPast(@Param("id") int itemID,
+                                                         @Param("moment") LocalDateTime dateTime);
 }

@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class ShortBooking {
-    int id;
-    int bookerId;
+    private int id;
+    private int bookerId;
 }

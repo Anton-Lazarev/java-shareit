@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class IncomeBookingDto {
+public class IncomeBookingDTO {
     @NotNull
     @FutureOrPresent
     private LocalDateTime start;
@@ -17,5 +17,5 @@ public class IncomeBookingDto {
     @FutureOrPresent
     private LocalDateTime end;
     @NotNull
-    private int itemId;
+    private Integer itemId;
 }

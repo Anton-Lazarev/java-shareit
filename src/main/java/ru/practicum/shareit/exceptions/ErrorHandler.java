@@ -13,7 +13,8 @@ import java.util.Map;
 public class ErrorHandler {
 
     @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class,
-            IncorrectBookingApproverException.class, IncorrectOwnerInBookingException.class})
+            IncorrectBookingApproverException.class, IncorrectOwnerInBookingException.class,
+            ItemRequestNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final RuntimeException e) {
         log.error(e.getMessage(), e.getStackTrace());
